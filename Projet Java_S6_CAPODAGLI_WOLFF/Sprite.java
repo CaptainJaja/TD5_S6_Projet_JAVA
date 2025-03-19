@@ -16,6 +16,14 @@ public class Sprite implements Displayable{
         this.height=height;     
     }
 
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
 
     @Override
     public void draw(Graphics g) {

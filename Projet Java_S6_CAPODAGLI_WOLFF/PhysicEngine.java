@@ -25,6 +25,11 @@ public class PhysicEngine implements Engine {
         }
     }
 
+    public void clearMovingSprites() {
+        movingSpriteList.clear();
+    }
+
+
     @Override
     public void update() {
         for (DynamicSprite dynamicSprite : movingSpriteList) {

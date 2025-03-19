@@ -8,7 +8,7 @@ public class DynamicSprite extends SolidSprite {
     private double speed=5;
     private final int spriteSheetNumberOfColumn=10;
     private int timeBetweenFrame =200;
-    private Direction direction= Direction.SOUTH;
+    private Direction direction= Direction.EAST;
 
     public enum Direction {
         NORTH(2), SOUTH(0), EAST(3), WEST(1);
@@ -23,8 +23,8 @@ public class DynamicSprite extends SolidSprite {
             return frameLineNumber;
         }
         
-        
     }
+
     private void move(){
         switch (direction) {
             case NORTH:
@@ -88,6 +88,7 @@ public class DynamicSprite extends SolidSprite {
     public DynamicSprite(double x, double y, Image image, double width, double height) {
         super(x, y, image, width, height);
     }
+
 
     @Override
     public void draw(Graphics g) {

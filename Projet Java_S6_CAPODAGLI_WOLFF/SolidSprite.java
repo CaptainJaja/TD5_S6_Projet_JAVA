@@ -7,6 +7,8 @@ public class SolidSprite extends Sprite{
         super(x, y, image, width, height);
     }
 
+
+
     public Rectangle2D getHitBox() {
         return new Rectangle2D.Double(x, y, (double) width, (double) height);
     }

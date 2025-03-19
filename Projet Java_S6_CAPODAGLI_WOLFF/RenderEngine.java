@@ -24,6 +24,12 @@ public class RenderEngine extends JPanel implements Engine {
         }
     }
 
+    public void clearRenderList() {
+        renderList.clear();
+    }
+    
+    
+
     @Override
     public void paint(Graphics g){
         super.paint(g);
