@@ -9,6 +9,7 @@ public class DynamicSprite extends SolidSprite {
     private final int spriteSheetNumberOfColumn=10;
     private int timeBetweenFrame =200;
     private Direction direction= Direction.SOUTH;
+    private Vitesse vitesse = Vitesse.SLOW;
 
     public enum Direction {
         NORTH(2), SOUTH(0), EAST(3), WEST(1);
@@ -41,6 +42,23 @@ public class DynamicSprite extends SolidSprite {
                 break;
             default:
                 break;
+        }
+    }
+
+    private void run(){
+        switch (direction){
+            case EAST -> {
+                this.x += 4*speed;
+            }
+            case WEST -> {
+                this.x -= 4*speed;
+            }
+            case NORTH -> {
+                this.y -= 4*speed;
+            }
+            case SOUTH -> {
+                this.y += 4*speed;
+            }
         }
     }
 
@@ -77,13 +95,22 @@ public class DynamicSprite extends SolidSprite {
 
     public void moveIfPossible(ArrayList<Sprite> environment){
         if(isMovingPossible(environment)){
-            move();
+            switch (vitesse) {
+                case FAST -> {
+                    run();
+                }
+                case SLOW -> {
+                    move();
+                }
         }
     }
 
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
+
+    public void setVitesse(Vitesse vitesse) {
+        this.vitesse = vitesse;
 
     public DynamicSprite(double x, double y, Image image, double width, double height) {
         super(x, y, image, width, height);

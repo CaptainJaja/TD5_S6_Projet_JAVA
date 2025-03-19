@@ -36,8 +36,13 @@ public class GameEngine implements Engine, KeyListener{
                 break;
             case KeyEvent.VK_DOWN:
                 hero.setDirection(DynamicSprite.Direction.SOUTH);
-            default:
+            case KeyEvent.VK_S:
+                hero.setVitesse(Vitesse.SLOW);
                 break;
+            case KeyEvent.VK_F:
+                hero.setVitesse(Vitesse.FAST);
+                break;
+
         }
     }
 
