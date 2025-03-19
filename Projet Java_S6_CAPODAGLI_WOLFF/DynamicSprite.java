@@ -75,6 +75,14 @@ public class DynamicSprite extends SolidSprite {
         return true;
     }
 
+    public double getX() {
+        return this.x;
+    }
+
+    public double getY() {
+        return this.y;
+    }
+
     public void moveIfPossible(ArrayList<Sprite> environment){
         if(isMovingPossible(environment)){
             move();

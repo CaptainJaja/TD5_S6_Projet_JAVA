@@ -10,18 +10,23 @@ public class GameEngine implements Engine, KeyListener{
     
     @Override
     public void update() {
-        if (hero.getHitBox().getX() > 1200) { // Sortie à droite vers Level 2
+        if (hero.getHitBox().getX() > 1200) {
             System.out.println("Le héros sort à droite, chargement du level 2...");
-            LevelManager.generateLevel2(); // Génère level2.txt
+            LevelManager.generateLevel2();
             LevelManager.loadLevel("./data/level2.txt", hero, Main.renderEngine, Main.physicEngine);
-            hero.setX(10); // Entrée du niveau 2
-            hero.setY(400);
+
+            // Position exacte du héros sur la case vide à gauche
+            hero.setX(10); // Ajuste légèrement selon taille sprite
+            hero.setY(400); // Milieu vertical de la fenêtre
         }
 
-        if (hero.getHitBox().getX() < 0) { // Retour à Level 1
+        if (hero.getHitBox().getX() < 0) {
             System.out.println("Retour à level1...");
             LevelManager.loadLevel("./data/level1.txt", hero, Main.renderEngine, Main.physicEngine);
-            hero.setX(1180); // Sortie du level 2 -> entrée dans level 1
+
+            // Position exacte du héros en revenant à droite dans level1
+            hero.setX(1180);
+            hero.setY(400);
         }
     }
     
