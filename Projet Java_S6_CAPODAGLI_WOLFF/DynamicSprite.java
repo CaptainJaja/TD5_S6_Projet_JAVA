@@ -1,51 +1,81 @@
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-
+import java.awt.geom.Rectangle2D;
 
 public class DynamicSprite extends SolidSprite {
-    private boolean isWalking=true;
-    private double speed=5;
-    private final int spriteSheetNumberOfColumn=10;
-    private int timeBetweenFrame =200;
-    private Direction direction= Direction.SOUTH;
+    private boolean isWalking = true;
+    private int speed = 5;
+    private final int spriteSheetNumberOfColumn = 10;
+    private int timeBetweenFrames = 200;
+    private Direction direction = Direction.EAST;
     private Vitesse vitesse = Vitesse.SLOW;
+    private int heroVitesse;
 
-    public enum Direction {
-        NORTH(2), SOUTH(0), EAST(3), WEST(1);
-
-        private int frameLineNumber;
-
-        Direction(int frameLineNumber) {
-            this.frameLineNumber = frameLineNumber;
-        }
-
-        public int getFrameLineNumber() {
-            return frameLineNumber;
-        }
-        
-        
+    public DynamicSprite(double x, double y, Image image, double width, double height) {
+        super(x, y,image, width, height);
     }
+    /**
+     * Cette fonction est a modifier pour éviter les bugs lorsqu'on court. Idéalement il faudrait
+     * une variable heroVitesse sachant si on court ou pas
+     * MAIS sans fonctionne aussi très bien
+     * Modification faite mais cela n'a pas regleé le problème
+     */
+    private boolean isMovingPossible(ArrayList<Sprite> environment){
+        Rectangle2D.Double moved = new Rectangle2D.Double();
+        switch(direction){
+            case EAST: moved.setRect(super.getHitBox().getX()+heroVitesse,super.getHitBox().getY(),
+                    super.getHitBox().getWidth(), super.getHitBox().getHeight());
+                break;
+            case WEST:  moved.setRect(super.getHitBox().getX()-heroVitesse,super.getHitBox().getY(),
+                    super.getHitBox().getWidth(), super.getHitBox().getHeight());
+                break;
+            case NORTH:  moved.setRect(super.getHitBox().getX(),super.getHitBox().getY()-heroVitesse,
+                    super.getHitBox().getWidth(), super.getHitBox().getHeight());
+                break;
+            case SOUTH:  moved.setRect(super.getHitBox().getX(),super.getHitBox().getY()+heroVitesse,
+                    super.getHitBox().getWidth(), super.getHitBox().getHeight());
+                break;
+        }
+
+        for (Sprite s : environment){
+            if ((s instanceof SolidSprite) && (s!=this)){
+                if (((SolidSprite) s).intersect(moved)){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    public void setVitesse(Vitesse vitesse) {
+        this.vitesse = vitesse;
+    }
+
     private void move(){
-        switch (direction) {
-            case NORTH:
-                this.y -=speed;
-                break;
-            case SOUTH:
-                this.y += speed;
-                break;
-            case WEST:
-                this.x -= speed;
-                break;
-            case EAST:
+        heroVitesse = speed;
+        switch (direction){
+            case EAST -> {
                 this.x += speed;
-                break;
-            default:
-                break;
+            }
+            case WEST -> {
+                this.x -= speed;
+            }
+            case NORTH -> {
+                this.y -= speed;
+            }
+            case SOUTH -> {
+                this.y += speed;
+            }
         }
     }
 
     private void run(){
+        heroVitesse = 4*speed;
+        /** Pour quand il est rapide, le hero peut passer partout */
         switch (direction){
             case EAST -> {
                 this.x += 4*speed;
@@ -62,39 +92,8 @@ public class DynamicSprite extends SolidSprite {
         }
     }
 
-    private boolean isMovingPossible(ArrayList<Sprite> environment){
-        Rectangle2D.Double moved = new Rectangle2D.Double();
-        switch (direction) {
-            case SOUTH:
-                moved.setRect(super.getHitBox().getX(), super.getHitBox().getY() + speed,
-                        super.getHitBox().getWidth(), super.getHitBox().getHeight());
-                break;
-            case NORTH:
-                moved.setRect(super.getHitBox().getX() , super.getHitBox().getY()- speed,
-                        super.getHitBox().getWidth(), super.getHitBox().getHeight());
-                break;
-            case WEST:
-                moved.setRect(super.getHitBox().getX() - speed, super.getHitBox().getY(),
-                        super.getHitBox().getWidth(), super.getHitBox().getHeight());
-                break;
-            case EAST:
-                moved.setRect(super.getHitBox().getX()+speed,super.getHitBox().getY(),
-                                    super.getHitBox().getWidth(), super.getHitBox().getHeight());          
-                break;
-        }
-
-        for(Sprite spt:environment){
-            if((spt instanceof SolidSprite)&&(spt!=this)){
-                if(((SolidSprite) spt).intersect(moved)){
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public void moveIfPossible(ArrayList<Sprite> environment){
-        if(isMovingPossible(environment)){
+    public void moveIfPossible(ArrayList<Sprite> environment) {
+        if (isMovingPossible(environment)) {
             switch (vitesse) {
                 case FAST -> {
                     run();
@@ -102,27 +101,22 @@ public class DynamicSprite extends SolidSprite {
                 case SLOW -> {
                     move();
                 }
+            }
         }
     }
 
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    public void setVitesse(Vitesse vitesse) {
-        this.vitesse = vitesse;
-
-    public DynamicSprite(double x, double y, Image image, double width, double height) {
-        super(x, y, image, width, height);
-    }
+    /** Idde de code pour la barre de vie: si le hero rencontre un arbre -1 si un rocher -5 et un trap il meurt illico
+     * donc pour ce la le hero doit avoir une barre de vie, afficher GAME OVER si il est mort */
 
     @Override
-    public void draw(Graphics g) {
-        long index = (System.currentTimeMillis()/timeBetweenFrame%spriteSheetNumberOfColumn);
-        int attitude=direction.getFrameLineNumber();
-        
-        g.drawImage(image, (int)x,(int) y,(int) (width+x),(int) (height+y), 
-        (int) (index*this.width),(int) (attitude*height),(int) ((index+1)*this.width), (int) ((attitude+1)*this.height), null);
+    public void draw(Graphics g){
+        int index = (int) (System.currentTimeMillis()/timeBetweenFrames%spriteSheetNumberOfColumn);
+        int attitude = direction.getFrameLineNumber();
+        g.drawImage(image, (int) x, (int) y, (int)(width+x), (int)(height+y),
+                (int)(index*this.width),(int)(attitude*height),
+                (int)((index+1)*this.width),(int)((attitude+1)*this.height),null);
 
     }
 }
+
+
