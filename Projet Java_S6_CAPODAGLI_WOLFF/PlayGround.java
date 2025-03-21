@@ -26,7 +26,7 @@ public class PlayGround {
         final int imageTrapHeight = imageTrap.getHeight(null);
         BufferedReader bufferedReader = new BufferedReader(new FileReader(pathName));
         
-        bufferedReader.readLine();
+        //bufferedReader.readLine();
         
         String line=bufferedReader.readLine();
         int lineNumber = 0;
