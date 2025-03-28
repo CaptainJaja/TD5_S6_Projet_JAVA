@@ -1,5 +1,6 @@
 public enum Vitesse {
-    SLOW(1),FAST(2);
+    SLOW(1), FAST(2);
+
     private int rapid;
 
     Vitesse(int rapid) {
@@ -7,5 +8,3 @@ public enum Vitesse {
     }
 
 }
-
-

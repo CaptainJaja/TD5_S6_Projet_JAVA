@@ -1,4 +1,4 @@
-import java.awt.Image; // ✅ Ajouté pour que Image soit reconnu
+import java.awt.Image; 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -22,7 +22,12 @@ public class PlayGround {
         final int imageGrassHeight = imageGrass.getHeight(null);
         final int imageRockWidth = imageRock.getWidth(null);
         final int imageRockHeight = imageRock.getHeight(null);
+        final int imageTrapWidth = imageTrap.getWidth(null);
+        final int imageTrapHeight = imageTrap.getHeight(null);
         BufferedReader bufferedReader = new BufferedReader(new FileReader(pathName));
+        
+        //bufferedReader.readLine();
+        
         String line=bufferedReader.readLine();
         int lineNumber = 0;
         int columnNumber = 0;
@@ -33,11 +38,22 @@ public class PlayGround {
             case 'T' : environment.add(new SolidSprite(columnNumber*imageTreeWidth,
             lineNumber*imageTreeHeight,imageTree, imageTreeWidth, imageTreeHeight));
             break;
-            case ' ' : environment.add(new Sprite(columnNumber*imageGrassWidth,
-            lineNumber*imageGrassHeight, imageGrass, imageGrassWidth, imageGrassHeight));
+            case ' ' : 
+                environment.add(new BasicSprite( // Utilisez BasicSprite au lieu de Sprite
+                        columnNumber * imageGrassWidth,
+                        lineNumber * imageGrassHeight,
+                        imageGrass,
+                        imageGrassWidth,
+                        imageGrassHeight));
+                break;
+            case 'R' : environment.add(new SolidSprite(columnNumber* imageTrapWidth,
+            lineNumber* imageTrapHeight, imageRock, imageTrapWidth, imageTrapHeight));
             break;
-            case 'R' : environment.add(new SolidSprite(columnNumber*imageRockWidth,
-            lineNumber*imageRockHeight, imageRock, imageRockWidth, imageRockHeight));
+            case 'X':
+                double trapX = columnNumber * imageTrapWidth;
+                double trapY = lineNumber * imageTrapHeight;
+                environment.add(new TrapSprite(trapX, trapY, imageTrap, imageTrapWidth, imageTrapHeight));
+                System.out.println("[DEBUG] Piège chargé : X=" + trapX + ", Y=" + trapY);
             break;
             }
             columnNumber++;
@@ -53,19 +69,21 @@ public class PlayGround {
     }
     
     public ArrayList<Sprite> getSolidSpriteList() {
-        ArrayList<Sprite> solidSpriteArrayList = new ArrayList<>();
+        ArrayList<Sprite> solidSprites = new ArrayList<>();
         for (Sprite sprite : environment) {
-            if (sprite instanceof SolidSprite)
-                solidSpriteArrayList.add(sprite);
+            if (sprite instanceof SolidSprite && !(sprite instanceof TrapSprite)) {
+                solidSprites.add(sprite);
+            }
         }
-        return solidSpriteArrayList;
+        return solidSprites;
     }
 
-    public ArrayList<Displayable> getSpriteList() {
-        ArrayList<Displayable> displayableArrayList = new ArrayList<>();
-        for (Sprite sprite : environment) {
-            displayableArrayList.add((Displayable) sprite);
+    // Dans PlayGround.java
+    public ArrayList<Sprite> getSpriteList() { // Changer le type de retour
+        ArrayList<Sprite> spriteList = new ArrayList<>();
+        for (Sprite sprite : environment) { // environment contient déjà des Sprite
+            spriteList.add(sprite);
         }
-        return displayableArrayList;
+        return spriteList;
     }
 }

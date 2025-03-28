@@ -7,11 +7,13 @@ public class SolidSprite extends Sprite{
         super(x, y, image, width, height);
     }
 
-    public Rectangle2D getHitBox() {
-        return new Rectangle2D.Double(x, y, (double) width, (double) height);
+
+
+    public Rectangle2D.Double getHitBox() {
+        return new Rectangle2D.Double(x, y, width, height);
     }
 
-    public boolean intersect(Rectangle2D.Double hitBox) {
+    public boolean intersect(Rectangle2D hitBox) {
         return this.getHitBox().intersects(hitBox);
     }
 }
