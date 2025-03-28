@@ -3,6 +3,7 @@ import java.util.ArrayList;
 public class PhysicEngine implements Engine {
     private ArrayList<DynamicSprite> movingSpriteList;
     private ArrayList<Sprite> environment;
+    
 
     public PhysicEngine() {
         movingSpriteList = new ArrayList<>();
@@ -13,6 +14,10 @@ public class PhysicEngine implements Engine {
         if (!environment.contains(sprite)) {
             environment.add(sprite);
         }
+    }
+    
+    public ArrayList<Sprite> getEnvironment() {
+        return environment;
     }
 
     public void setEnvironment(ArrayList<Sprite> environment) {
@@ -34,6 +39,9 @@ public class PhysicEngine implements Engine {
     public void update() {
         for (DynamicSprite dynamicSprite : movingSpriteList) {
             dynamicSprite.moveIfPossible(environment);
+            // Alignement sur la grille 64x64
+            // dynamicSprite.setX(Math.round(dynamicSprite.getX() / 64) * 64);
+            // dynamicSprite.setY(Math.round(dynamicSprite.getY() / 64) * 64);
         }
     }
 }

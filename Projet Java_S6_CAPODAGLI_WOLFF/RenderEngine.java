@@ -2,12 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-
+import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
 
 
 public class RenderEngine extends JPanel implements Engine {
     private ArrayList<Displayable> renderList;
+    private Image gameOverImage;
 
     public RenderEngine (){
         renderList = new ArrayList<>();
@@ -31,11 +32,20 @@ public class RenderEngine extends JPanel implements Engine {
     
 
     @Override
-    public void paint(Graphics g){
+    public void paint(Graphics g) {
         super.paint(g);
+        // Dessiner les sprites
         for (Displayable renderObject : renderList) {
             renderObject.draw(g);
         }
+        // Dessiner l'image de Game Over par-dessus
+        if (Main.gameEngine != null && Main.gameEngine.isGameOver()) {
+            g.drawImage(gameOverImage, 0, 0, getWidth(), getHeight(), null);
+        }
+    }
+    
+    public void setGameOverImage(Image image) {
+        this.gameOverImage = image;
     }
     
     @Override

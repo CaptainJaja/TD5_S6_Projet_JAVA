@@ -38,15 +38,22 @@ public class PlayGround {
             case 'T' : environment.add(new SolidSprite(columnNumber*imageTreeWidth,
             lineNumber*imageTreeHeight,imageTree, imageTreeWidth, imageTreeHeight));
             break;
-            case ' ' : environment.add(new Sprite(columnNumber*imageGrassWidth,
-            lineNumber*imageGrassHeight, imageGrass, imageGrassWidth, imageGrassHeight));
-            break;
+            case ' ' : 
+                environment.add(new BasicSprite( // Utilisez BasicSprite au lieu de Sprite
+                        columnNumber * imageGrassWidth,
+                        lineNumber * imageGrassHeight,
+                        imageGrass,
+                        imageGrassWidth,
+                        imageGrassHeight));
+                break;
             case 'R' : environment.add(new SolidSprite(columnNumber* imageTrapWidth,
             lineNumber* imageTrapHeight, imageRock, imageTrapWidth, imageTrapHeight));
             break;
             case 'X':
-            environment.add(new SolidSprite(columnNumber * imageRockWidth,
-                    lineNumber * imageRockHeight, imageTrap, imageRockWidth, imageRockHeight));
+                double trapX = columnNumber * imageTrapWidth;
+                double trapY = lineNumber * imageTrapHeight;
+                environment.add(new TrapSprite(trapX, trapY, imageTrap, imageTrapWidth, imageTrapHeight));
+                System.out.println("[DEBUG] Piège chargé : X=" + trapX + ", Y=" + trapY);
             break;
             }
             columnNumber++;
@@ -62,19 +69,21 @@ public class PlayGround {
     }
     
     public ArrayList<Sprite> getSolidSpriteList() {
-        ArrayList<Sprite> solidSpriteArrayList = new ArrayList<>();
+        ArrayList<Sprite> solidSprites = new ArrayList<>();
         for (Sprite sprite : environment) {
-            if (sprite instanceof SolidSprite)
-                solidSpriteArrayList.add(sprite);
+            if (sprite instanceof SolidSprite && !(sprite instanceof TrapSprite)) {
+                solidSprites.add(sprite);
+            }
         }
-        return solidSpriteArrayList;
+        return solidSprites;
     }
 
-    public ArrayList<Displayable> getSpriteList() {
-        ArrayList<Displayable> displayableArrayList = new ArrayList<>();
-        for (Sprite sprite : environment) {
-            displayableArrayList.add((Displayable) sprite);
+    // Dans PlayGround.java
+    public ArrayList<Sprite> getSpriteList() { // Changer le type de retour
+        ArrayList<Sprite> spriteList = new ArrayList<>();
+        for (Sprite sprite : environment) { // environment contient déjà des Sprite
+            spriteList.add(sprite);
         }
-        return displayableArrayList;
+        return spriteList;
     }
 }

@@ -1,11 +1,11 @@
-T           T     T
-T TTTTTTT T TTTTT T
-T X       T     R T
-T R XTTRXXXTTTR R T
-T T T   T     T   T
-T T T T T TTRTXTT T
-  T   T T          
-T TTT X T TRTTTTT T
-T   R T T T   T   T
-TTT TXT T T T XTT T
-T       T   T     T
+T     T T       T T
+T X T T T TTX X T T
+T R T   T   T X   T
+TXT TTT TTX T RTT T
+T T T   R   T R   T
+T T TTTTR TTX TTT T
+  T         X   R  
+T T TTTTXTT TTT T T
+T R T   T     R T T
+T RTT T TTTTTTT T T
+T     T         T T

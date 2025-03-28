@@ -11,13 +11,14 @@ public class Main {
     public static PhysicEngine physicEngine;
     public static GameEngine gameEngine;
     private static DynamicSprite hero;
+    public static PlayGround currentPlayGround;
 
     public Main() throws Exception {
         createStartScreen();
     }
 
     private void createStartScreen() {
-        JFrame frame = new JFrame("Mon Ecran");
+        JFrame frame = new JFrame("Jungle RUN");
         frame.setSize(1200, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
@@ -63,21 +64,24 @@ public class Main {
 
         renderEngine = new RenderEngine();
         physicEngine = new PhysicEngine();
-        gameEngine = new GameEngine(hero);
+        gameEngine = new GameEngine(hero, renderEngine);
 
-        // Initialisation des timers
-        Timer renderTimer = new Timer(50, e -> renderEngine.update());
-        Timer gameTimer = new Timer(50, e -> gameEngine.update());
-        Timer physicTimer = new Timer(50, e -> physicEngine.update());
+        // Initialisation du timer
+        Timer mainTimer = new Timer(50, e -> {
+            physicEngine.update(); // 1. Met à jour les positions (physique)
+            gameEngine.update(); // 2. Détecte les collisions (game logic)
+            renderEngine.update(); // 3. Rafraîchit l'affichage
+        });
+        mainTimer.start(); // Démarre le timer
 
-        // Démarrage des timers
-        renderTimer.start();
-        gameTimer.start();
-        physicTimer.start();
+        Main.currentPlayGround = LevelManager.loadLevel(
+                "./data/level1.txt",
+                hero,
+                renderEngine,
+                physicEngine);
 
         displayZoneFrame.add(renderEngine);
         displayZoneFrame.addKeyListener(gameEngine);
-        LevelManager.loadLevel("./data/level1.txt", hero, renderEngine, physicEngine);
         displayZoneFrame.setVisible(true);
     }
 

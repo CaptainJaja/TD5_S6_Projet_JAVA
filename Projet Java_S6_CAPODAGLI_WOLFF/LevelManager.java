@@ -2,12 +2,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.Stack;
+
+///////// GENERATION ALEATOIRE DES NIVEAUX SUPERIEURES
 
 public class LevelManager {
     private static final int WIDTH = 19; // Largeur de la carte
@@ -17,9 +16,7 @@ public class LevelManager {
     private static final char ROCK = 'R';
     private static final char TRAP = 'X';
 
-    /**
-     * Génère un fichier `level2.txt` avec un chemin jouable.
-     */
+    // Génère un fichier `level2.txt` avec un chemin jouable.
      public static void generateLevel2() {
         Random random = new Random();
         char[][] grid = new char[HEIGHT][WIDTH];
@@ -28,7 +25,6 @@ public class LevelManager {
         for (int y = 0; y < HEIGHT; y++) {
             Arrays.fill(grid[y], TREE);
         }
-
         // Génération des points d'entrée/sortie
         int startY = 6; // Position fixe pour l'exemple
         int endY = 6;
@@ -40,7 +36,7 @@ public class LevelManager {
         stack.push(new int[]{startY, 1}); // Commence à côté de l'entrée
         
         while (!stack.isEmpty()) {
-            int[] current = stack.peek();
+            int[] current = stack.peek(); //On regarde l'élément au dessus de la stack sans l'enlever
             int y = current[0];
             int x = current[1];
             
@@ -99,22 +95,30 @@ public class LevelManager {
 
 
 
-    /**
-     * Charge un niveau spécifique depuis un fichier.
-     */
+    
+    //Charge un niveau spécifique depuis un fichier.
+    
     public static PlayGround loadLevel(String filePath, DynamicSprite hero,
             RenderEngine renderEngine, PhysicEngine physicEngine) {
         System.out.println("Chargement du niveau: " + filePath);
 
+        // Réinitialiser les moteurs
+        physicEngine.clearMovingSprites(); // Vide la liste des sprites mobiles
+        physicEngine.setEnvironment(new ArrayList<>()); // Réinitialise l'environnement
+        renderEngine.clearRenderList(); // Vide la liste d'affichage
+
+        // Charger le nouveau niveau
         PlayGround level = new PlayGround(filePath);
-        renderEngine.clearRenderList();
-        renderEngine.addToRenderList(level.getSpriteList());
+        Main.currentPlayGround = level;
+        // Ajouter les nouveaux sprites
+        for (Sprite sprite : level.getSpriteList()) {
+            renderEngine.addToRenderList((Displayable) sprite);
+        }
         renderEngine.addToRenderList(hero);
 
-    
-        physicEngine.clearMovingSprites();
-        physicEngine.addToMovingSpriteList(hero);
+        // Mettre à jour l'environnement physique
         physicEngine.setEnvironment(level.getSolidSpriteList());
+        physicEngine.addToMovingSpriteList(hero);
 
         return level;
     }

@@ -1,37 +1,68 @@
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
+import java.awt.Image;
+import javax.imageio.ImageIO;
+import java.awt.geom.Rectangle2D;
 
 public class GameEngine implements Engine, KeyListener{
     private final DynamicSprite hero;
-    public GameEngine(DynamicSprite hero) {
+    private boolean gameOver = false;
+    private Image gameOverImage;
+    private String currentLevel= "./data/level1.txt";
+
+
+    public GameEngine(DynamicSprite hero, RenderEngine renderEngine) {
         this.hero = hero;
+        try {
+            gameOverImage = ImageIO.read(new File("./img/gameover.png"));
+            renderEngine.setGameOverImage(gameOverImage); // Transmettez l'image
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
-    @Override
     public void update() {
-        if (hero.getHitBox().getX() > 1200) { // Sortie du level1 vers level2
-            System.out.println("Le héros sort à droite, passage au level2...");
-            LevelManager.generateLevel2();
-            LevelManager.loadLevel("./data/level2.txt", hero, Main.renderEngine, Main.physicEngine);
+        if (gameOver)
+            return;
 
-            // 🔹 Positionner le héros à l'entrée du level2 (même Y que la sortie du level1)
+        // Gestion des changements de niveau en premier
+        if (hero.getHitBox().getX() > 1200) {
+            currentLevel = "./data/level2.txt";
+            LevelManager.generateLevel2();
+            LevelManager.loadLevel(currentLevel, hero, Main.renderEngine, Main.physicEngine);
             hero.setX(10);
-            System.out.println("Héros placé dans level2 à (10, " + hero.getY() + ")");
+        } else if (hero.getHitBox().getX() < 0) {
+            currentLevel = "./data/level1.txt";
+            LevelManager.loadLevel(currentLevel, hero, Main.renderEngine, Main.physicEngine);
+            hero.setX(1180);
         }
 
-        if (hero.getHitBox().getX() < 0) { // Sortie de level2 vers level1
-            System.out.println("Retour à level1...");
-            LevelManager.loadLevel("./data/level1.txt", hero, Main.renderEngine, Main.physicEngine);
+        // Gestion des collisions avec les pièges après le changement de niveau
+        Rectangle2D.Double heroHitbox = hero.getHitBox();
+        System.out.println("Hero Hitbox: " + heroHitbox);
 
-            // 🔹 Retour à droite de level1 avec la même Y que sortie du level2
-            hero.setX(1180);
-            System.out.println("Héros replacé dans level1 à (1180, " + hero.getY() + ")");
+        for (Sprite sprite : Main.currentPlayGround.getSpriteList()) {
+            if (sprite instanceof TrapSprite) {
+                Rectangle2D.Double trapHitbox = ((TrapSprite) sprite).getHitBox();
+                System.out.println("Trap Hitbox: " + trapHitbox);
+
+                if (heroHitbox.intersects(trapHitbox)) {
+                    gameOver = true;
+                    System.out.println("GAME OVER !");
+                    Main.renderEngine.repaint();
+                    break;
+                }
+            }
         }
     }
     
     @Override
     public void keyReleased(KeyEvent e) {
-        // Implémentation vide pour l'instant (nécessaire pour respecter KeyListener)
+        // Ne pas réinitialiser la direction, juste arrêter le mouvement
+        // hero.setSpeedX(0);
+        // hero.setSpeedY(0);
     }
 
     @Override
@@ -55,15 +86,43 @@ public class GameEngine implements Engine, KeyListener{
                 break;
             case KeyEvent.VK_DOWN:
                 hero.setDirection(DynamicSprite.Direction.SOUTH);
-            default:
                 break;
-            case KeyEvent.VK_S:
+            case KeyEvent.VK_S:// Touche F pour ralentir
                 hero.setVitesse(Vitesse.SLOW);
                 break;
-            case KeyEvent.VK_F:
+            case KeyEvent.VK_F:// Touche F pour accelerer
                 hero.setVitesse(Vitesse.FAST);
                 break;
+            case KeyEvent.VK_SPACE: // Touche ESPACE pour s'arrêter
+                hero.setSpeedX(0);
+                hero.setSpeedY(0);
+                break;
+            case KeyEvent.VK_R:
+                if (gameOver)
+                    resetGame();
+                break;
         }
+    }
+    
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    private void resetGame() {
+        gameOver = false;
+
+        // Réinitialiser le héros aux coordonnées de départ
+        hero.setX(0); // Position X initiale
+        hero.setY(192); // Position Y initiale
+        hero.setSpeedX(0);
+        hero.setSpeedY(0);
+
+        // Recharger le niveau depuis le début
+        LevelManager.loadLevel("./data/level1.txt", hero, Main.renderEngine, Main.physicEngine);
+
+        // Forcer le rafraîchissement
+        Main.renderEngine.repaint();
+        Main.currentPlayGround = new PlayGround("./data/level1.txt"); // Recréer le niveau
     }
 
     
