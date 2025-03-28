@@ -52,17 +52,6 @@ Voici à quoi ressemble l'interface du jeu :
 - **Écran Game Over** :
 ![Game Over](Projet_Java_S6_CAPODAGLI_WOLFF/img/gameover.png)
 
-## 🚀 Exécution du jeu
-
-Pour lancer le jeu, assurez-vous que Java est installé, puis exécutez :
-
-```bash
-javac *.java
-java Main
-```
-
-## 🎯 Objectif
-Le but est simple : emmener le héros jusqu'à l'arrivée sans tomber sur un piège ! Bonne chance !
 
 ---
 
